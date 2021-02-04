@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Manage</title>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <link href="assests/frm/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<section class="container-fluid mt-4">
+    <div class="row ">
+        <div class="col-md-4">
+            <!--            <form action="customer" method="post">-->
+            <form id="customerForm">
+                <div class="form-group">
+                    <label for="cusID">Customer ID</label>
+                    <input class="form-control" id="cusID" name="id" type="text">
+                    <label for="cusName">Customer Name</label>
+                    <input class="form-control" id="cusName" name="name" type="text">
+                    <label for="cusAddress">Customer Address</label>
+                    <input class="form-control" id="cusAddress" name="address" type="text">
+                    <label for="cusSalary">Customer Salary</label>
+                    <input class="form-control" id="cusSalary" name="salary" type="text">
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-info" id="btnSave" type="button">Save</button>
+                    <button class="btn btn-warning" id="btnUpdate" type="button">Update</button>
+                    <button class="btn btn-danger" id="btnDelete" type="button">Delete</button>
+                    <button class="btn btn-dark" id="btnClear" type="button">Clear</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-8">
+            <table class="table table-bordered table-hover">
+                <thead class="bg-danger text-white">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">NAME</th>
+                    <th scope="col">ADDRESS</th>
+                    <th scope="col">SALARY</th>
+                </tr>
+                </thead>
+                <tbody class="tblCustomer">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<script src="assests/lib/jquery-3.5.1.min.js"></script>
+<script src="assests/frm/js/bootstrap.min.js"></script>
+
+<script>
+    loadAllCustomer();
+
+    //Save Customer
+    $('#btnSave').click(function () {
+        let cusId=$('#cusID').val();
+        let name=$('#cusName').val();
+        let address=$('#cusAddress').val();
+        let salary=$('#cusSalary').val();
+
+        $.ajax({
+            url: "http://localhost:3000/user",
+            method: "post",
+            dataType: 'json',
+            contentType: "application/json",
+            //(JSON.stringify)javascript object eka JSON String ekakata pass karanawa
+            data:JSON.stringify({
+                'cusId':cusId,
+                'name':name,
+                'address':address,
+                'salary':salary
+            }),
+            success: function (resp) {
+                if (resp.message=="Success"){
+                    alert("Customer Added");
+                }
+                loadAllCustomer();
+            },
+            error: function () {
+                alert("Error in the request");
+            }
+        });
+    });
+
+    $('#btnClear').click(function () {
+        loadAllCustomer();
+    });
+
+    //Load All Customer
+    function loadAllCustomer() {
+        $('.tblCustomer').empty();
+
+        $.ajax({
+            url: 'http://localhost:3000/user',
+            method: "get",
+            dataType: 'json',
+            contentType: 'application/json',
+
+            success: function (resp) {
+                for (var i in resp) {
+                    var cusId=resp[i].cusId;
+                    var name=resp[i].name;
+                    var address=resp[i].address;
+                    var salary=resp[i].salary;
+
+                    var row=`<tr><td>${cusId}</td><td>${name}</td><td>${address}</td><td>${salary}</td></tr>`;
+                    $('.tblCustomer').append(row);
+                }
+            }
+        });
+    }
+
+
+    //Search Customer
+    $("#cusID").on('keypress',function (e) {
+        if(e.code == "Enter"){
+            let cusId=$('#cusID').val();
+
+            $.ajax({
+                url: "http://localhost:3000/user/" + cusId,
+                method: "get",
+                dataType: 'json',
+                contentType: "application/json",
+
+                success:function (resp) {
+                    //set details to input fields
+                    $('#cusID').val(resp.cusId);
+                    $('#cusName').val(resp.name);
+                    $('#cusAddress').val(resp.address);
+                    $('#cusSalary').val(resp.salary);
+                },
+                error: function () {
+                    alert("Error in the request");
+                }
+            });
+        }
+    });
+
+
+    //Update Customer
+    $('#btnUpdate').click(function () {
+        let cusId=$('#cusID').val();
+        let name=$('#cusName').val();
+        let address=$('#cusAddress').val();
+        let salary=$('#cusSalary').val();
+
+        $.ajax({
+            url: "http://localhost:3000/user/" +cusId,
+            method: "put",
+            dataType: 'json',
+            contentType: "application/json",
+            data:JSON.stringify({
+                'cusId':cusId,
+                'name':name,
+                'address':address,
+                'salary':salary
+            }),
+            success: function (resp) {
+                if (resp.message=="Success"){
+                    alert("Customer Updated");
+                }
+                loadAllCustomer();
+            },
+            error: function () {
+                alert("Error in the request");
+            }
+        });
+    });
+
+
+    //Delete Customer
+    $('#btnDelete').click(function () {
+        let cusId = $('#cusID').val().toString();
+
+
+        $.ajax({
+            method:"delete",
+            url: "http://localhost:3000/user/"+ cusId,
+            dataType: 'json',
+            success: function (resp) {
+                if (resp.message=="Success"){
+                    alert("Customer Removed");
+                }
+                loadAllCustomer();
+            },
+            error: function () {
+                alert("Error in the request");
+            }
+        });
+    });
+
+
+</script>
+
+</body>
+</html>

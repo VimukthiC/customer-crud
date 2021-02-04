@@ -1,0 +1,16 @@
+drop database customer_detail;
+create database customer_detail;
+
+use customer_detail;
+
+create table if not exists customer(
+  cusId varchar(100),
+  name varchar(100),
+  address varchar(100),
+  salary decimal(10,2),
+constraint primary key(cusId)
+);
+
+insert into customer values
+('C001','Nimal','Galle',15000.00),
+('C002','Nimal','Galle',15000.00);
