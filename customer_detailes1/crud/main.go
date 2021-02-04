@@ -45,7 +45,6 @@ func GetAllCustomer(w http.ResponseWriter,r *http.Request)  {
 			var address string
 			var salary string
 			err2 := row.Scan(&cusId, &name, &address, &salary)
-			row.Columns()
 			if err2 != nil{
 				panic(err2.Error())
 			}else{
@@ -79,7 +78,6 @@ func GetCustomer(w http.ResponseWriter,r *http.Request)  {
 			var address string
 			var salary string
 			err2 := row.Scan(&cusId, &name, &address, &salary)
-			row.Columns()
 			if err2 != nil{
 				panic(err2.Error())
 			}else{
